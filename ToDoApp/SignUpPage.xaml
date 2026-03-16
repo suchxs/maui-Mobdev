@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="listView_Corsega.SignUpPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#F4F7FB">
+    <ContentPage.Resources>
+        <Color x:Key="PageTextPrimary">#1E293B</Color>
+        <Color x:Key="PageTextMuted">#64748B</Color>
+        <Color x:Key="InputBorder">#DCE3ED</Color>
+        <Color x:Key="PrimaryButton">#0F766E</Color>
+        <Color x:Key="SecondaryButton">#CCFBF1</Color>
+        <Color x:Key="SecondaryButtonText">#0F766E</Color>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <Grid Padding="26,16,26,28"
+              RowDefinitions="Auto,*"
+              RowSpacing="24">
+
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" VerticalOptions="Start">
+                <Label Grid.Column="0"
+                       Text="Carrier"
+                       FontFamily="OpenSansSemibold"
+                       FontSize="14"
+                       TextColor="{StaticResource PageTextMuted}" />
+                <Label Grid.Column="1"
+                       Text="12:41 AM"
+                       FontFamily="OpenSansSemibold"
+                       HorizontalTextAlignment="Center"
+                       FontSize="16"
+                       TextColor="{StaticResource PageTextPrimary}" />
+                <Border Grid.Column="2"
+                        StrokeShape="RoundRectangle 4"
+                        Padding="12,4"
+                        StrokeThickness="0"
+                        BackgroundColor="{StaticResource PageTextPrimary}">
+                    <Label Text=" " />
+                </Border>
+            </Grid>
+
+            <VerticalStackLayout Grid.Row="1"
+                                 VerticalOptions="Center"
+                                 Spacing="12">
+
+                <Border HeightRequest="190"
+                        WidthRequest="250"
+                        HorizontalOptions="Center"
+                        StrokeThickness="0"
+                        BackgroundColor="#E8EEF5"
+                        StrokeShape="RoundRectangle 18">
+                    <Image Source="dotnet_bot.png"
+                           Aspect="AspectFit"
+                           Margin="12" />
+                </Border>
+
+                <VerticalStackLayout Margin="0,12,0,0" Spacing="10">
+                    <Border Stroke="{StaticResource InputBorder}" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
+                        <Entry x:Name="UsernameEntry" Placeholder="User name" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
+                    </Border>
+
+                    <Border Stroke="{StaticResource InputBorder}" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
+                        <Entry x:Name="EmailEntry" Placeholder="Email address" Keyboard="Email" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
+                    </Border>
+
+                    <Border Stroke="{StaticResource InputBorder}" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
+                        <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
+                    </Border>
+
+                    <Border Stroke="{StaticResource InputBorder}" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
+                        <Entry x:Name="ConfirmPasswordEntry" Placeholder="Confirm Password" IsPassword="True" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
+                    </Border>
+
+                    <Button Text="Sign up"
+                            Margin="0,4,0,0"
+                            CornerRadius="10"
+                            FontFamily="OpenSansSemibold"
+                            BackgroundColor="{StaticResource PrimaryButton}"
+                            TextColor="White"
+                            Clicked="OnSignUpClicked" />
+
+                    <Button Text="Sign in"
+                            CornerRadius="10"
+                            FontFamily="OpenSansSemibold"
+                            BackgroundColor="{StaticResource SecondaryButton}"
+                            TextColor="{StaticResource SecondaryButtonText}"
+                            Clicked="OnGoToSignInClicked" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>
