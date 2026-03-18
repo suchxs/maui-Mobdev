@@ -18,6 +18,12 @@ public partial class SignInPage : ContentPage
             return;
         }
 
+        if (!LocalAuthService.TrySignIn(email, password, out var message))
+        {
+            await DisplayAlertAsync("Sign in failed", message, "OK");
+            return;
+        }
+
         await Shell.Current.GoToAsync(nameof(MainPage));
     }
 

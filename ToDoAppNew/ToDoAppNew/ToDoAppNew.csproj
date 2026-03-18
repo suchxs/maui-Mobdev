@@ -74,8 +74,8 @@
             BeforeTargets="_CreateAppBundle"
             Condition="'$(TargetPlatformIdentifier)' == 'ios' Or '$(TargetPlatformIdentifier)' == 'maccatalyst'">
         <!-- Remove stale FinderInfo/file-provider xattrs from previous outputs before app bundle creation. -->
-        <Exec Command="xattr -cr &quot;$(ProjectDir)bin&quot;" IgnoreExitCode="true" />
-        <Exec Command="xattr -cr &quot;$(ProjectDir)obj&quot;" IgnoreExitCode="true" />
+        <Exec Command="xattr -cr &quot;$(BaseOutputPath)&quot;" IgnoreExitCode="true" />
+        <Exec Command="xattr -cr &quot;$(BaseIntermediateOutputPath)&quot;" IgnoreExitCode="true" />
     </Target>
 
     <Target Name="StripMacXattrsBeforeCodesign"

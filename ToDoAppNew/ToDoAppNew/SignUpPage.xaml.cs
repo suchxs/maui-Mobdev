@@ -29,7 +29,13 @@ public partial class SignUpPage : ContentPage
             return;
         }
 
-        await DisplayAlertAsync("Account created", "Your account has been created.", "Continue");
+        if (!LocalAuthService.TrySignUp(username, email, password, out var message))
+        {
+            await DisplayAlertAsync("Sign up failed", message, "OK");
+            return;
+        }
+
+        await DisplayAlertAsync("Account created", message, "Continue");
         await Shell.Current.GoToAsync("..");
     }
 

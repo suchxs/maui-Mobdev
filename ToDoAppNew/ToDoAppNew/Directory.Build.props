@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <!-- Keep build outputs outside cloud-synced folders to avoid FinderInfo/file-provider xattrs on app bundles. -->
+    <BaseOutputPath>$(HOME)/Library/Caches/ToDoAppNew/build/bin/</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(HOME)/Library/Caches/ToDoAppNew/build/obj/</BaseIntermediateOutputPath>
+  </PropertyGroup>
+</Project>
