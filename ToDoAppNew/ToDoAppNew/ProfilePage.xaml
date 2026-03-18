@@ -19,23 +19,13 @@
                  BackgroundColor="#D5DAE2" />
 
         <VerticalStackLayout Grid.Row="2" Spacing="14" VerticalOptions="Start">
-            <Border Stroke="#D1D8E3"
-                    BackgroundColor="White"
-                    StrokeShape="RoundRectangle 12"
-                    Padding="16">
-                <Border.Shadow>
-                    <Shadow Opacity="0.12" Radius="8" Offset="0,2" Brush="#000000" />
-                </Border.Shadow>
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="Welcome" FontFamily="OpenSansSemibold" FontSize="22" TextColor="#1E2430" />
-                    <Label Text="This is your profile tab."
-                           FontSize="16"
-                           TextColor="#6B7382" />
-                    <Label Text="You can customize this section later for account details and settings."
-                           FontSize="14"
-                           TextColor="#8D95A3" />
-                </VerticalStackLayout>
-            </Border>
+            <Button Text="Sign out"
+                    Margin="0,6,0,0"
+                    CornerRadius="10"
+                    FontFamily="OpenSansSemibold"
+                    BackgroundColor="#FDEBEC"
+                    TextColor="#C0392B"
+                    Clicked="OnSignOutClicked" />
         </VerticalStackLayout>
     </Grid>
 

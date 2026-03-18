@@ -6,6 +6,7 @@ namespace listView_Corsega;
 public static class LocalAuthService
 {
     private const string UsersPreferenceKey = "todoapp_users_v1";
+    private const string CurrentUserPreferenceKey = "todoapp_current_user_v1";
 
     private sealed class StoredUser
     {
@@ -57,6 +58,25 @@ public static class LocalAuthService
 
         message = $"Welcome back, {user.Username}!";
         return true;
+    }
+
+    public static string? CurrentUserEmail
+    {
+        get
+        {
+            var email = Preferences.Default.Get(CurrentUserPreferenceKey, string.Empty);
+            return string.IsNullOrWhiteSpace(email) ? null : email;
+        }
+    }
+
+    public static void SetCurrentUser(string email)
+    {
+        Preferences.Default.Set(CurrentUserPreferenceKey, NormalizeEmail(email));
+    }
+
+    public static void ClearCurrentUser()
+    {
+        Preferences.Default.Remove(CurrentUserPreferenceKey);
     }
 
     private static List<StoredUser> LoadUsers()

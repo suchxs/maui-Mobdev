@@ -7,6 +7,11 @@ public partial class AddTodoPage : ContentPage
         InitializeComponent();
     }
 
+    private async void OnBackClicked(object? sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("..");
+    }
+
     private async void OnAddClicked(object? sender, EventArgs e)
     {
         var title = TitleEntry.Text?.Trim();

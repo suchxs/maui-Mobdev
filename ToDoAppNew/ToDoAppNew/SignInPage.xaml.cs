@@ -24,6 +24,9 @@ public partial class SignInPage : ContentPage
             return;
         }
 
+        LocalAuthService.SetCurrentUser(email);
+        ToDoStore.SetCurrentUser(LocalAuthService.CurrentUserEmail);
+
         await Shell.Current.GoToAsync("//MainPage");
     }
 

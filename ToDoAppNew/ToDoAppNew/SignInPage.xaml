@@ -48,7 +48,7 @@
                     </Border>
 
                     <Border Stroke="{StaticResource InputBorder}" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
-                        <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
+                        <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True" Keyboard="Text" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
                     </Border>
 
                     <Button Text="Sign in"

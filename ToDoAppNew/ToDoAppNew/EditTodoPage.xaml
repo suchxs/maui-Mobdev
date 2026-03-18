@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="listView_Corsega.AddTodoPage"
-             Title="Add Note"
+             x:Class="listView_Corsega.EditTodoPage"
+             Title="Edit Task"
              BackgroundColor="#F2F4F8">
 
     <Grid Padding="16,12,16,20" RowDefinitions="Auto,Auto,*">
@@ -18,7 +18,7 @@
                     Clicked="OnBackClicked" />
 
             <Label Grid.ColumnSpan="3"
-                   Text="Add Note"
+                   Text="Edit Task"
                    FontFamily="OpenSansSemibold"
                    FontSize="34"
                    HorizontalOptions="Center"
@@ -35,7 +35,7 @@
             <Border Stroke="#DCE3ED" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
                 <Entry x:Name="TitleEntry"
                        Placeholder="Title"
-                       Keyboard="Text"
+                                           Keyboard="Text"
                        MaxLength="60"
                        ReturnType="Next" />
             </Border>
@@ -43,19 +43,34 @@
             <Border Stroke="#DCE3ED" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,8">
                 <Editor x:Name="DetailsEditor"
                         Placeholder="Details"
-                        Keyboard="Text"
+                                                Keyboard="Text"
                         MaxLength="400"
                         AutoSize="TextChanges"
                         HeightRequest="140" />
             </Border>
 
-            <Button Text="Add"
+            <Button Text="Update"
                     Margin="0,8,0,0"
                     CornerRadius="10"
                     FontFamily="OpenSansSemibold"
                     BackgroundColor="{StaticResource Primary}"
                     TextColor="White"
-                    Clicked="OnAddClicked" />
+                    Clicked="OnUpdateClicked" />
+
+            <Button x:Name="StatusButton"
+                    Text="Complete"
+                    CornerRadius="10"
+                    FontFamily="OpenSansSemibold"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    Clicked="OnToggleStatusClicked" />
+
+            <Button Text="Delete"
+                    CornerRadius="10"
+                    FontFamily="OpenSansSemibold"
+                    BackgroundColor="#FDEBEC"
+                    TextColor="#C0392B"
+                    Clicked="OnDeleteClicked" />
         </VerticalStackLayout>
     </Grid>
 

@@ -44,7 +44,7 @@
 
                 <VerticalStackLayout Margin="0,12,0,0" Spacing="10">
                     <Border Stroke="{StaticResource InputBorder}" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
-                        <Entry x:Name="UsernameEntry" Placeholder="User name" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
+                        <Entry x:Name="UsernameEntry" Placeholder="User name" Keyboard="Text" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
                     </Border>
 
                     <Border Stroke="{StaticResource InputBorder}" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
@@ -52,11 +52,11 @@
                     </Border>
 
                     <Border Stroke="{StaticResource InputBorder}" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
-                        <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
+                        <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True" Keyboard="Text" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
                     </Border>
 
                     <Border Stroke="{StaticResource InputBorder}" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
-                        <Entry x:Name="ConfirmPasswordEntry" Placeholder="Confirm Password" IsPassword="True" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
+                        <Entry x:Name="ConfirmPasswordEntry" Placeholder="Confirm Password" IsPassword="True" Keyboard="Text" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
                     </Border>
 
                     <Button Text="Sign up"

@@ -11,5 +11,6 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(CompletedPage), typeof(CompletedPage));
         Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));
         Routing.RegisterRoute(nameof(AddTodoPage), typeof(AddTodoPage));
+        Routing.RegisterRoute(nameof(EditTodoPage), typeof(EditTodoPage));
     }
 }

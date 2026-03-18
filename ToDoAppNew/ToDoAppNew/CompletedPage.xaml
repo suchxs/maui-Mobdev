@@ -36,6 +36,9 @@
                             StrokeShape="RoundRectangle 10"
                             Stroke="#D1D8E3"
                             BackgroundColor="White">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OpenEditPage" CommandParameter="{Binding id}" />
+                        </Border.GestureRecognizers>
                         <Border.Shadow>
                             <Shadow Opacity="0.12" Radius="8" Offset="0,2" Brush="#000000" />
                         </Border.Shadow>

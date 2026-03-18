@@ -15,6 +15,16 @@ public partial class MainPage : ContentPage
         await Shell.Current.GoToAsync(nameof(AddTodoPage));
     }
 
+    private async void OpenEditPage(object? sender, TappedEventArgs e)
+    {
+        if (e.Parameter is null || !int.TryParse(e.Parameter.ToString(), out var id))
+        {
+            return;
+        }
+
+        await Shell.Current.GoToAsync($"{nameof(EditTodoPage)}?id={id}");
+    }
+
     private async void DeleteToDoItem(object? sender, EventArgs e)
     {
         if (sender is not Element deleteElement)
