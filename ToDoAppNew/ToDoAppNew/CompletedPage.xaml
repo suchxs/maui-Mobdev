@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:todo="clr-namespace:ToDoMaui_Listview"
+             x:Class="listView_Corsega.CompletedPage"
+             Title="Completed"
+             BackgroundColor="#F2F4F8">
+
+    <Grid Padding="16,12,16,0" RowDefinitions="Auto,Auto,*">
+        <Label Grid.Row="0"
+               Text="Completed"
+               FontFamily="OpenSansSemibold"
+               FontSize="34"
+               HorizontalOptions="Center"
+               TextColor="#A6ACB6" />
+
+        <BoxView Grid.Row="1"
+                 HeightRequest="1"
+                 Margin="0,6,0,12"
+                 BackgroundColor="#D5DAE2" />
+
+        <CollectionView Grid.Row="2"
+                        x:Name="completedCV"
+                        SelectionMode="None"
+                        ItemsLayout="VerticalList">
+            <CollectionView.EmptyView>
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="8">
+                    <Label Text="No completed tasks yet" FontFamily="OpenSansSemibold" FontSize="18" TextColor="#8B95A5" HorizontalTextAlignment="Center" />
+                    <Label Text="Mark tasks as done from the ToDo tab" FontSize="14" TextColor="#A4AABA" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="todo:ToDoClass">
+                    <Border Margin="0,6"
+                            Padding="14,12"
+                            StrokeShape="RoundRectangle 10"
+                            Stroke="#D1D8E3"
+                            BackgroundColor="White">
+                        <Border.Shadow>
+                            <Shadow Opacity="0.12" Radius="8" Offset="0,2" Brush="#000000" />
+                        </Border.Shadow>
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   Text="✓"
+                                   VerticalOptions="Center"
+                                   FontSize="20"
+                                   FontFamily="OpenSansSemibold"
+                                   TextColor="#159A5B" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding title}"
+                                   VerticalOptions="Center"
+                                   FontSize="24"
+                                   FontFamily="OpenSansRegular"
+                                   TextColor="#4A5565"
+                                   TextDecorations="Strikethrough"
+                                   LineBreakMode="TailTruncation" />
+                            <Border Grid.Column="2"
+                                    WidthRequest="38"
+                                    HeightRequest="38"
+                                    Padding="0"
+                                    StrokeShape="RoundRectangle 12"
+                                    Stroke="#D9E0EC"
+                                    BackgroundColor="#F8FAFD">
+                                <ImageButton ClassId="{Binding id}"
+                                             BackgroundColor="Transparent"
+                                             Padding="8"
+                                             Clicked="DeleteCompletedItem">
+                                    <ImageButton.Source>
+                                        <FontImageSource Glyph="✕"
+                                                         Size="14"
+                                                         Color="#6B7280"
+                                                         FontFamily="OpenSansSemibold" />
+                                    </ImageButton.Source>
+                                </ImageButton>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+
+</ContentPage>

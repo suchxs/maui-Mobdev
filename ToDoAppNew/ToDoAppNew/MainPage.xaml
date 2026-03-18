@@ -2,89 +2,111 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:todo="clr-namespace:ToDoMaui_Listview"
-             x:Class="listView_Corsega.MainPage">
-    <Grid Padding="18" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}" RowDefinitions="Auto,Auto,*" RowSpacing="12">
+             x:Class="listView_Corsega.MainPage"
+             Title="ToDo"
+             BackgroundColor="#F2F4F8">
+
+    <Grid Padding="16,12,16,0" RowDefinitions="Auto,Auto,*">
         <Label Grid.Row="0"
-               Text="To-Do"
-               FontSize="30"
-               FontAttributes="Bold"
-               TextColor="{AppThemeBinding Light={StaticResource MidnightBlue}, Dark={StaticResource White}}" />
+               Text="ToDo"
+               FontFamily="OpenSansSemibold"
+               FontSize="34"
+               HorizontalOptions="Center"
+               TextColor="#A6ACB6" />
 
-        <Border Grid.Row="1"
-                Padding="14"
-                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                StrokeShape="RoundRectangle 18"
-                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
-            <VerticalStackLayout Spacing="10">
-                <Entry x:Name="titleEntry" Placeholder="Title" Keyboard="Text" ReturnType="Next" MaxLength="50"/>
-                <Editor x:Name="detailsEditor" Placeholder="Details" MaxLength="240" Keyboard="Text" HeightRequest="110"/>
-                <Grid ColumnSpacing="8" ColumnDefinitions="*,*,*">
-                    <Button Grid.Column="0" x:Name="addBtn" IsVisible="True" Text="Add" Clicked="AddToDoItem"/>
-                    <Button Grid.Column="1" x:Name="editBtn" IsVisible="False" Text="Save" Clicked="EditToDoItem"/>
-                    <Button Grid.Column="2" x:Name="cancelBtn" IsVisible="False" Text="Cancel" BackgroundColor="{StaticResource Gray300}" TextColor="{StaticResource Black}" Clicked="CancelEdit"/>
-                </Grid>
-            </VerticalStackLayout>
-        </Border>
+        <BoxView Grid.Row="1"
+                 HeightRequest="1"
+                 Margin="0,6,0,12"
+                 BackgroundColor="#D5DAE2" />
 
-        <Border Grid.Row="2"
-                Padding="10"
-                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                StrokeShape="RoundRectangle 18"
-                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
+        <Grid Grid.Row="2">
             <CollectionView x:Name="todoCV"
-                            SelectionMode="Single"
-                            SelectionChanged="TodoCV_OnSelectionChanged"
-                            BackgroundColor="Transparent"
-                            VerticalOptions="Fill"
-                            ItemsLayout="VerticalList">
+                            SelectionMode="None"
+                            ItemsLayout="VerticalList"
+                            ItemsSource="{Binding}">
                 <CollectionView.EmptyView>
-                    <Label Text="No to-do items yet"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center"
-                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="8">
+                        <Label Text="No tasks yet" FontFamily="OpenSansSemibold" FontSize="18" TextColor="#8B95A5" HorizontalTextAlignment="Center" />
+                        <Label Text="Tap + to add your first task" FontSize="14" TextColor="#A4AABA" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
                 </CollectionView.EmptyView>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="todo:ToDoClass">
-                        <SwipeView>
-                            <SwipeView.RightItems>
-                                <SwipeItems Mode="Execute">
-                                    <SwipeItem Text="Delete"
-                                               BackgroundColor="{StaticResource Secondary}"
-                                               CommandParameter="{Binding id}"
-                                               Invoked="SwipeDeleteToDoItem" />
-                                </SwipeItems>
-                            </SwipeView.RightItems>
-                            <Border Margin="0,4"
-                                    Padding="12"
-                                    Loaded="TodoItem_Loaded"
-                                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}"
-                                    StrokeShape="RoundRectangle 14"
-                                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
-                                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="4">
-                                    <Label Grid.Row="0" Grid.Column="0"
-                                           Text="{Binding title}"
-                                           FontSize="16"
-                                           FontAttributes="Bold"
-                                           LineBreakMode="TailTruncation" />
-                                    <Label Grid.Row="1" Grid.Column="0"
-                                           Text="{Binding detail}"
-                                           FontSize="14"
-                                           LineBreakMode="TailTruncation" />
-                                    <Button Grid.Row="0"
-                                            Grid.RowSpan="2"
-                                            Grid.Column="1"
-                                            Text="Delete"
-                                            ClassId="{Binding id}"
-                                            BackgroundColor="{StaticResource Secondary}"
-                                            TextColor="{StaticResource PrimaryDarkText}"
-                                            Clicked="DeleteToDoItem" />
-                                </Grid>
-                            </Border>
-                        </SwipeView>
+                        <Border Margin="0,6"
+                                Padding="14,12"
+                                StrokeShape="RoundRectangle 10"
+                                Stroke="#D1D8E3"
+                                BackgroundColor="White">
+                            <Border.Shadow>
+                                <Shadow Opacity="0.14" Radius="8" Offset="0,2" Brush="#000000" />
+                            </Border.Shadow>
+                            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+                                <Label Grid.Column="0"
+                                       Text="{Binding title}"
+                                       VerticalOptions="Center"
+                                       FontSize="28"
+                                       FontFamily="OpenSansRegular"
+                                       TextColor="#1E2430"
+                                       LineBreakMode="TailTruncation" />
+
+                                <Border Grid.Column="1"
+                                    WidthRequest="38"
+                                    HeightRequest="38"
+                                    Padding="0"
+                                    StrokeShape="RoundRectangle 12"
+                                    Stroke="#D9E0EC"
+                                    BackgroundColor="#F8FAFD">
+                                    <ImageButton ClassId="{Binding id}"
+                                                 BackgroundColor="Transparent"
+                                                 Padding="8"
+                                                 Clicked="DeleteToDoItem">
+                                        <ImageButton.Source>
+                                            <FontImageSource Glyph="✕"
+                                                             Size="14"
+                                                             Color="#6B7280"
+                                                             FontFamily="OpenSansSemibold" />
+                                        </ImageButton.Source>
+                                    </ImageButton>
+                                </Border>
+
+                                <Border Grid.Column="2"
+                                    WidthRequest="38"
+                                    HeightRequest="38"
+                                    Padding="0"
+                                    StrokeShape="RoundRectangle 12"
+                                    Stroke="#D5DCF2"
+                                    BackgroundColor="#EEF2FF">
+                                    <ImageButton ClassId="{Binding id}"
+                                                 BackgroundColor="Transparent"
+                                                 Padding="8"
+                                                 Clicked="CompleteToDoItem">
+                                        <ImageButton.Source>
+                                            <FontImageSource Glyph="✓"
+                                                             Size="16"
+                                                             Color="#4F46E5"
+                                                             FontFamily="OpenSansSemibold" />
+                                        </ImageButton.Source>
+                                    </ImageButton>
+                                </Border>
+                            </Grid>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-        </Border>
+
+            <Button Text="+"
+                    Clicked="AddToDoItem"
+                    WidthRequest="56"
+                    HeightRequest="56"
+                    CornerRadius="16"
+                    FontSize="28"
+                    Margin="0,0,10,16"
+                    HorizontalOptions="End"
+                    VerticalOptions="End"
+                    FontFamily="OpenSansSemibold"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White" />
+        </Grid>
     </Grid>
 
 </ContentPage>

@@ -4,11 +4,47 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:listView_Corsega"
-    Title="ToDoApp">
+    Title="ToDoApp"
+    FlyoutBehavior="Flyout"
+    Shell.NavBarIsVisible="False">
 
-    <ShellContent
-        Title="Sign In"
-        ContentTemplate="{DataTemplate local:SignInPage}"
-        Route="SignInPage" />
+    <FlyoutItem
+        Route="Auth"
+        FlyoutItemIsVisible="False">
+        <ShellContent
+            Title="Sign In"
+            ContentTemplate="{DataTemplate local:SignInPage}"
+            Route="SignInPage" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Tasks" Route="Tasks">
+        <Tab Title="ToDo" Route="ToDoTab">
+            <Tab.Icon>
+                <FontImageSource Glyph="📋" Size="18" />
+            </Tab.Icon>
+            <ShellContent
+                Title="ToDo"
+                ContentTemplate="{DataTemplate local:MainPage}"
+                Route="MainPage" />
+        </Tab>
+        <Tab Title="Completed" Route="CompletedTab">
+            <Tab.Icon>
+                <FontImageSource Glyph="✓" Size="18" />
+            </Tab.Icon>
+            <ShellContent
+                Title="Completed"
+                ContentTemplate="{DataTemplate local:CompletedPage}"
+                Route="CompletedPage" />
+        </Tab>
+        <Tab Title="Profile" Route="ProfileTab">
+            <Tab.Icon>
+                <FontImageSource Glyph="👤" Size="18" />
+            </Tab.Icon>
+            <ShellContent
+                Title="Profile"
+                ContentTemplate="{DataTemplate local:ProfilePage}"
+                Route="ProfilePage" />
+        </Tab>
+    </FlyoutItem>
 
 </Shell>

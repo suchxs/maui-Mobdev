@@ -24,7 +24,7 @@ public partial class SignInPage : ContentPage
             return;
         }
 
-        await Shell.Current.GoToAsync(nameof(MainPage));
+        await Shell.Current.GoToAsync("//MainPage");
     }
 
     private async void OnGoToSignUpClicked(object? sender, EventArgs e)

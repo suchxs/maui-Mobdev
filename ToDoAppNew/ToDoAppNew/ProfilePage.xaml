@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="listView_Corsega.ProfilePage"
+             Title="Profile"
+             BackgroundColor="#F2F4F8">
+
+    <Grid Padding="16,12,16,0" RowDefinitions="Auto,Auto,*">
+        <Label Grid.Row="0"
+               Text="Profile"
+               FontFamily="OpenSansSemibold"
+               FontSize="34"
+               HorizontalOptions="Center"
+               TextColor="#A6ACB6" />
+
+        <BoxView Grid.Row="1"
+                 HeightRequest="1"
+                 Margin="0,6,0,12"
+                 BackgroundColor="#D5DAE2" />
+
+        <VerticalStackLayout Grid.Row="2" Spacing="14" VerticalOptions="Start">
+            <Border Stroke="#D1D8E3"
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 12"
+                    Padding="16">
+                <Border.Shadow>
+                    <Shadow Opacity="0.12" Radius="8" Offset="0,2" Brush="#000000" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Welcome" FontFamily="OpenSansSemibold" FontSize="22" TextColor="#1E2430" />
+                    <Label Text="This is your profile tab."
+                           FontSize="16"
+                           TextColor="#6B7382" />
+                    <Label Text="You can customize this section later for account details and settings."
+                           FontSize="14"
+                           TextColor="#8D95A3" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>

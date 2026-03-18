@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="listView_Corsega.AddTodoPage"
+             Title="Add Note"
+             BackgroundColor="#F2F4F8">
+
+    <Grid Padding="16,12,16,20" RowDefinitions="Auto,Auto,*">
+        <Label Grid.Row="0"
+               Text="Add Note"
+               FontFamily="OpenSansSemibold"
+               FontSize="34"
+               HorizontalOptions="Center"
+               TextColor="#A6ACB6" />
+
+        <BoxView Grid.Row="1"
+                 HeightRequest="1"
+                 Margin="0,6,0,12"
+                 BackgroundColor="#D5DAE2" />
+
+        <VerticalStackLayout Grid.Row="2" Spacing="12" VerticalOptions="Start">
+            <Border Stroke="#DCE3ED" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
+                <Entry x:Name="TitleEntry"
+                       Placeholder="Title"
+                       MaxLength="60"
+                       ReturnType="Next" />
+            </Border>
+
+            <Border Stroke="#DCE3ED" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,8">
+                <Editor x:Name="DetailsEditor"
+                        Placeholder="Details"
+                        MaxLength="400"
+                        AutoSize="TextChanges"
+                        HeightRequest="140" />
+            </Border>
+
+            <Button Text="Add"
+                    Margin="0,8,0,0"
+                    CornerRadius="10"
+                    FontFamily="OpenSansSemibold"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    Clicked="OnAddClicked" />
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>
