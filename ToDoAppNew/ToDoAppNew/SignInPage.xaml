@@ -18,14 +18,7 @@
               RowDefinitions="Auto,*"
               RowSpacing="24">
 
-            <Grid Grid.Row="0" ColumnDefinitions="*,Auto,*" VerticalOptions="Start">
-                <Label Grid.Column="1"
-                       Text="12:41 AM"
-                       FontFamily="OpenSansSemibold"
-                       HorizontalTextAlignment="Center"
-                       FontSize="16"
-                       TextColor="{StaticResource PageTextPrimary}" />
-            </Grid>
+            <Grid Grid.Row="0" />
 
             <VerticalStackLayout Grid.Row="1"
                                  VerticalOptions="Center"
@@ -37,7 +30,7 @@
                         StrokeThickness="0"
                         BackgroundColor="#E8EEF5"
                         StrokeShape="RoundRectangle 18">
-                    <Image Source="dotnet_bot.png"
+                    <Image Source="icon.png"
                            Aspect="AspectFit"
                            Margin="12" />
                 </Border>

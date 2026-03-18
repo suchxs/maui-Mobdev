@@ -19,6 +19,17 @@
                  BackgroundColor="#D5DAE2" />
 
         <VerticalStackLayout Grid.Row="2" Spacing="14" VerticalOptions="Start">
+            <Border HeightRequest="170"
+                    WidthRequest="220"
+                    HorizontalOptions="Center"
+                    StrokeThickness="0"
+                    BackgroundColor="#E8EEF5"
+                    StrokeShape="RoundRectangle 18"
+                    Padding="10">
+                <Image Source="icon.png"
+                       Aspect="AspectFit" />
+            </Border>
+
             <Button Text="Sign out"
                     Margin="0,6,0,0"
                     CornerRadius="10"
