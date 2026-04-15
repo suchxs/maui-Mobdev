@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace ToDoAppV2;
+namespace listView_Corsega;
 
 public class Program
 {

@@ -1,12 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace ToDoAppV2;
+namespace listView_Corsega;
 
 public partial class App : Application
 {
     public App()
     {
         InitializeComponent();
+        ToDoStore.SetCurrentUser(LocalAuthService.CurrentUserEmail);
     }
 
     protected override Window CreateWindow(IActivationState? activationState)

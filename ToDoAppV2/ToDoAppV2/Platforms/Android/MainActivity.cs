@@ -2,7 +2,7 @@
 using Android.Content.PM;
 using Android.OS;
 
-namespace ToDoAppV2;
+namespace listView_Corsega;
 
 [Activity(Theme = "@style/Maui.SplashTheme", MainLauncher = true, LaunchMode = LaunchMode.SingleTop,
     ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode |

@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
 
-namespace ToDoAppV2;
+namespace listView_Corsega;
 
 [Application]
 public class MainApplication : MauiApplication

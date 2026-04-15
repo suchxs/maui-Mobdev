@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="listView_Corsega.ProfilePage"
+             Title="Profile"
+             BackgroundColor="#F2F4F8">
+
+    <Grid Padding="16,12,16,0" RowDefinitions="Auto,Auto,*">
+        <Label Grid.Row="0"
+               Text="Profile"
+               FontFamily="OpenSansSemibold"
+               FontSize="34"
+               HorizontalOptions="Center"
+               TextColor="#A6ACB6" />
+
+        <BoxView Grid.Row="1"
+                 HeightRequest="1"
+                 Margin="0,6,0,12"
+                 BackgroundColor="#D5DAE2" />
+
+        <VerticalStackLayout Grid.Row="2" Spacing="14" VerticalOptions="Start">
+            <Border HeightRequest="170"
+                    WidthRequest="220"
+                    HorizontalOptions="Center"
+                    StrokeThickness="0"
+                    BackgroundColor="#E8EEF5"
+                    StrokeShape="RoundRectangle 18"
+                    Padding="10">
+                <Image Source="icon.png"
+                       Aspect="AspectFit" />
+            </Border>
+
+            <Button Text="Sign out"
+                    Margin="0,6,0,0"
+                    CornerRadius="10"
+                    FontFamily="OpenSansSemibold"
+                    BackgroundColor="#FDEBEC"
+                    TextColor="#C0392B"
+                    Clicked="OnSignOutClicked" />
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>

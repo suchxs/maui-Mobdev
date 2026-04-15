@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace ToDoAppV2;
+namespace listView_Corsega;
 
 [Register("AppDelegate")]
 public class AppDelegate : MauiUIApplicationDelegate

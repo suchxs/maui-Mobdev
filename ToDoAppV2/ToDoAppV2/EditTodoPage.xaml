@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="listView_Corsega.EditTodoPage"
+             Title="Edit Task"
+             BackgroundColor="#F2F4F8">
+
+    <Grid Padding="16,12,16,20" RowDefinitions="Auto,Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" HeightRequest="44">
+            <Button Grid.Column="0"
+                    Text="‹ Back"
+                    FontFamily="OpenSansSemibold"
+                    FontSize="14"
+                    CornerRadius="10"
+                    Padding="12,6"
+                    BackgroundColor="#E8EDF7"
+                    TextColor="#1F2937"
+                    Clicked="OnBackClicked" />
+
+            <Label Grid.ColumnSpan="3"
+                   Text="Edit Task"
+                   FontFamily="OpenSansSemibold"
+                   FontSize="34"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   TextColor="#A6ACB6" />
+        </Grid>
+
+        <BoxView Grid.Row="1"
+                 HeightRequest="1"
+                 Margin="0,6,0,12"
+                 BackgroundColor="#D5DAE2" />
+
+        <VerticalStackLayout Grid.Row="2" Spacing="12" VerticalOptions="Start">
+            <Border Stroke="#DCE3ED" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
+                <Entry x:Name="TitleEntry"
+                       Placeholder="Title"
+                                           Keyboard="Text"
+                       MaxLength="60"
+                       ReturnType="Next" />
+            </Border>
+
+            <Border Stroke="#DCE3ED" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,8">
+                <Editor x:Name="DetailsEditor"
+                        Placeholder="Details"
+                                                Keyboard="Text"
+                        MaxLength="400"
+                        AutoSize="TextChanges"
+                        HeightRequest="140" />
+            </Border>
+
+            <Button Text="Update"
+                    Margin="0,8,0,0"
+                    CornerRadius="10"
+                    FontFamily="OpenSansSemibold"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    Clicked="OnUpdateClicked" />
+
+            <Button x:Name="StatusButton"
+                    Text="Complete"
+                    CornerRadius="10"
+                    FontFamily="OpenSansSemibold"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    Clicked="OnToggleStatusClicked" />
+
+            <Button Text="Delete"
+                    CornerRadius="10"
+                    FontFamily="OpenSansSemibold"
+                    BackgroundColor="#FDEBEC"
+                    TextColor="#C0392B"
+                    Clicked="OnDeleteClicked" />
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>
