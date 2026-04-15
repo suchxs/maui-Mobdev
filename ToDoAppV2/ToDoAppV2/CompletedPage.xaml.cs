@@ -2,10 +2,36 @@ namespace listView_Corsega;
 
 public partial class CompletedPage : ContentPage
 {
+    private bool _isLoading;
+
     public CompletedPage()
     {
         InitializeComponent();
         completedCV.ItemsSource = ToDoStore.Completed;
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (_isLoading)
+        {
+            return;
+        }
+
+        _isLoading = true;
+        try
+        {
+            var result = await ToDoStore.RefreshAsync();
+            if (!result.Success && ToDoStore.CurrentUserId.HasValue)
+            {
+                await DisplayAlertAsync("Sync failed", result.Message, "OK");
+            }
+        }
+        finally
+        {
+            _isLoading = false;
+        }
     }
 
     private async void OpenEditPage(object? sender, TappedEventArgs e)
@@ -18,7 +44,7 @@ public partial class CompletedPage : ContentPage
         await Shell.Current.GoToAsync($"{nameof(EditTodoPage)}?id={id}");
     }
 
-    private void DeleteCompletedItem(object? sender, EventArgs e)
+    private async void DeleteCompletedItem(object? sender, EventArgs e)
     {
         if (sender is not Element deleteElement)
         {
@@ -30,6 +56,10 @@ public partial class CompletedPage : ContentPage
             return;
         }
 
-        ToDoStore.Delete(id);
+        var result = await ToDoStore.DeleteAsync(id);
+        if (!result.Success)
+        {
+            await DisplayAlertAsync("Delete failed", result.Message, "OK");
+        }
     }
 }

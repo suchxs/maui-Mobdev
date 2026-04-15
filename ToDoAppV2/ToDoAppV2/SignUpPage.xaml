@@ -44,7 +44,11 @@
 
                 <VerticalStackLayout Margin="0,12,0,0" Spacing="10">
                     <Border Stroke="{StaticResource InputBorder}" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
-                        <Entry x:Name="UsernameEntry" Placeholder="User name" Keyboard="Text" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
+                        <Entry x:Name="FirstNameEntry" Placeholder="First name" Keyboard="Text" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
+                    </Border>
+
+                    <Border Stroke="{StaticResource InputBorder}" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">
+                        <Entry x:Name="LastNameEntry" Placeholder="Last name" Keyboard="Text" TextColor="{StaticResource PageTextPrimary}" PlaceholderColor="{StaticResource PageTextMuted}" />
                     </Border>
 
                     <Border Stroke="{StaticResource InputBorder}" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="12,4">

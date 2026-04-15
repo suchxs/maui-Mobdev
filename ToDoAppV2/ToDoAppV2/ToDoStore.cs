@@ -1,90 +1,114 @@
 using System.Collections.ObjectModel;
-using System.Text.Json;
-using Microsoft.Maui.Storage;
 using ToDoMaui_Listview;
 
 namespace listView_Corsega;
 
 public static class ToDoStore
 {
-    private const string TasksPreferencePrefix = "todoapp_tasks_v1_";
-
-    private static int _nextId = 1;
-    private static string? _currentUserEmail;
-
-    private sealed class StoredTaskState
-    {
-        public int NextId { get; set; } = 1;
-        public List<ToDoClass> Todos { get; set; } = [];
-        public List<ToDoClass> Completed { get; set; } = [];
-    }
+    private static AuthUser? _currentUser;
 
     public static ObservableCollection<ToDoClass> Todos { get; } = [];
 
     public static ObservableCollection<ToDoClass> Completed { get; } = [];
 
-    public static void SetCurrentUser(string? email)
+    public static int? CurrentUserId => _currentUser?.Id;
+
+    public static void SetCurrentUser(AuthUser? user)
     {
-        _currentUserEmail = NormalizeEmail(email);
-        LoadCurrentUserState();
+        _currentUser = user;
+        Todos.Clear();
+        Completed.Clear();
     }
 
-    public static ToDoClass Add(string title, string detail = "")
+    public static async Task<(bool Success, string Message)> RefreshAsync()
     {
-        var item = new ToDoClass
+        if (_currentUser is null || _currentUser.Id <= 0)
         {
-            id = _nextId++,
-            title = title.Trim(),
-            detail = detail.Trim()
-        };
+            Todos.Clear();
+            Completed.Clear();
+            return (false, "Please sign in first.");
+        }
 
-        Todos.Add(item);
-        SaveCurrentUserState();
-        return item;
+        var activeResult = await ToDoApiClient.GetItemsAsync(_currentUser.Id, "active");
+        var inactiveResult = await ToDoApiClient.GetItemsAsync(_currentUser.Id, "inactive");
+
+        if (!activeResult.Success)
+        {
+            return (false, activeResult.Message);
+        }
+
+        if (!inactiveResult.Success)
+        {
+            return (false, inactiveResult.Message);
+        }
+
+        ReplaceItems(Todos, activeResult.Items.OrderByDescending(t => t.id));
+        ReplaceItems(Completed, inactiveResult.Items.OrderByDescending(t => t.id));
+        return (true, "Success");
     }
 
-    public static void Delete(int id)
+    public static async Task<(bool Success, string Message)> AddAsync(string title, string detail = "")
     {
+        if (_currentUser is null || _currentUser.Id <= 0)
+        {
+            return (false, "Please sign in first.");
+        }
+
+        var result = await ToDoApiClient.AddItemAsync(title.Trim(), detail.Trim(), _currentUser.Id);
+        if (!result.Success)
+        {
+            return (false, result.Message);
+        }
+
+        await RefreshAsync();
+        return (true, result.Message);
+    }
+
+    public static async Task<(bool Success, string Message)> DeleteAsync(int id)
+    {
+        var result = await ToDoApiClient.DeleteItemAsync(id);
+        if (!result.Success)
+        {
+            return (false, result.Message);
+        }
+
         var inTodo = Todos.FirstOrDefault(t => t.id == id);
         if (inTodo is not null)
         {
             Todos.Remove(inTodo);
-            SaveCurrentUserState();
-            return;
         }
 
         var inCompleted = Completed.FirstOrDefault(t => t.id == id);
         if (inCompleted is not null)
         {
             Completed.Remove(inCompleted);
-            SaveCurrentUserState();
         }
+
+        return (true, result.Message);
     }
 
-    public static void MarkCompleted(int id)
+    public static async Task<(bool Success, string Message)> MarkCompletedAsync(int id)
     {
-        var item = Todos.FirstOrDefault(t => t.id == id);
-        if (item is null)
+        var result = await ToDoApiClient.UpdateItemStatusAsync(id, "inactive");
+        if (!result.Success)
         {
-            return;
+            return (false, result.Message);
         }
 
-        Todos.Remove(item);
-        Completed.Add(item);
-        SaveCurrentUserState();
+        await RefreshAsync();
+        return (true, result.Message);
     }
 
-    public static void MarkIncomplete(int id)
+    public static async Task<(bool Success, string Message)> MarkIncompleteAsync(int id)
     {
-        var item = Completed.FirstOrDefault(t => t.id == id);
-        if (item is null)
+        var result = await ToDoApiClient.UpdateItemStatusAsync(id, "active");
+        if (!result.Success)
         {
-            return;
+            return (false, result.Message);
         }
 
-        Completed.Remove(item);
-        Todos.Add(item);
-        SaveCurrentUserState();
+        await RefreshAsync();
+        return (true, result.Message);
     }
 
     public static ToDoClass? Find(int id)
@@ -98,98 +122,24 @@ public static class ToDoStore
         return Completed.Any(t => t.id == id);
     }
 
-    public static bool Update(int id, string title, string detail)
+    public static async Task<(bool Success, string Message)> UpdateAsync(int id, string title, string detail)
     {
-        var item = Find(id);
-        if (item is null)
+        var result = await ToDoApiClient.UpdateItemAsync(id, title.Trim(), detail.Trim());
+        if (!result.Success)
         {
-            return false;
+            return (false, result.Message);
         }
 
-        item.title = title.Trim();
-        item.detail = detail.Trim();
-        SaveCurrentUserState();
-        return true;
+        await RefreshAsync();
+        return (true, result.Message);
     }
 
-    private static void LoadCurrentUserState()
+    private static void ReplaceItems(ObservableCollection<ToDoClass> target, IEnumerable<ToDoClass> source)
     {
-        _nextId = 1;
-        Todos.Clear();
-        Completed.Clear();
-
-        if (string.IsNullOrWhiteSpace(_currentUserEmail))
+        target.Clear();
+        foreach (var item in source)
         {
-            return;
-        }
-
-        var json = Preferences.Default.Get(BuildTasksKey(_currentUserEmail), string.Empty);
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return;
-        }
-
-        try
-        {
-            var state = JsonSerializer.Deserialize<StoredTaskState>(json);
-            if (state is null)
-            {
-                return;
-            }
-
-            foreach (var item in state.Todos)
-            {
-                Todos.Add(item);
-            }
-
-            foreach (var item in state.Completed)
-            {
-                Completed.Add(item);
-            }
-
-            var maxId = Todos.Concat(Completed).Select(t => t.id).DefaultIfEmpty(0).Max();
-            _nextId = Math.Max(state.NextId, maxId + 1);
-        }
-        catch
-        {
-            // Recover from malformed local task JSON by starting fresh for this account.
-            _nextId = 1;
-            Todos.Clear();
-            Completed.Clear();
+            target.Add(item);
         }
     }
-
-    private static void SaveCurrentUserState()
-    {
-        if (string.IsNullOrWhiteSpace(_currentUserEmail))
-        {
-            return;
-        }
-
-        var state = new StoredTaskState
-        {
-            NextId = _nextId,
-            Todos = [.. Todos],
-            Completed = [.. Completed]
-        };
-
-        var json = JsonSerializer.Serialize(state);
-        Preferences.Default.Set(BuildTasksKey(_currentUserEmail), json);
-    }
-
-    private static string BuildTasksKey(string normalizedEmail)
-    {
-        return $"{TasksPreferencePrefix}{normalizedEmail}";
-    }
-
-    private static string? NormalizeEmail(string? email)
-    {
-        if (string.IsNullOrWhiteSpace(email))
-        {
-            return null;
-        }
-
-        return email.Trim().ToLowerInvariant();
-    }
-
 }

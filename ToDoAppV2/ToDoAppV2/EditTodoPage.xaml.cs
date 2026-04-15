@@ -5,6 +5,7 @@ public partial class EditTodoPage : ContentPage
 {
     private int _taskId;
     private bool _isCompleted;
+    private bool _isBusy;
 
     public string? TaskId
     {
@@ -64,6 +65,11 @@ public partial class EditTodoPage : ContentPage
 
     private async void OnUpdateClicked(object? sender, EventArgs e)
     {
+        if (_isBusy)
+        {
+            return;
+        }
+
         var title = TitleEntry.Text?.Trim();
         var details = DetailsEditor.Text?.Trim() ?? string.Empty;
 
@@ -73,39 +79,86 @@ public partial class EditTodoPage : ContentPage
             return;
         }
 
-        if (!ToDoStore.Update(_taskId, title, details))
+        _isBusy = true;
+        try
         {
-            await DisplayAlertAsync("Task not found", "This task no longer exists.", "OK");
-            await Shell.Current.GoToAsync("..");
-            return;
-        }
+            var result = await ToDoStore.UpdateAsync(_taskId, title, details);
+            if (!result.Success)
+            {
+                await DisplayAlertAsync("Update failed", result.Message, "OK");
+                return;
+            }
 
-        await DisplayAlertAsync("Updated", "Task updated successfully.", "OK");
+            await DisplayAlertAsync("Updated", "Task updated successfully.", "OK");
+        }
+        finally
+        {
+            _isBusy = false;
+        }
     }
 
     private async void OnToggleStatusClicked(object? sender, EventArgs e)
     {
-        if (_isCompleted)
+        if (_isBusy)
         {
-            ToDoStore.MarkIncomplete(_taskId);
-        }
-        else
-        {
-            ToDoStore.MarkCompleted(_taskId);
+            return;
         }
 
-        await Shell.Current.GoToAsync("..");
+        _isBusy = true;
+        try
+        {
+            (bool Success, string Message) result;
+            if (_isCompleted)
+            {
+                result = await ToDoStore.MarkIncompleteAsync(_taskId);
+            }
+            else
+            {
+                result = await ToDoStore.MarkCompletedAsync(_taskId);
+            }
+
+            if (!result.Success)
+            {
+                await DisplayAlertAsync("Status update failed", result.Message, "OK");
+                return;
+            }
+
+            await Shell.Current.GoToAsync("..");
+        }
+        finally
+        {
+            _isBusy = false;
+        }
     }
 
     private async void OnDeleteClicked(object? sender, EventArgs e)
     {
+        if (_isBusy)
+        {
+            return;
+        }
+
         var confirm = await DisplayAlertAsync("Delete task", "Delete this item?", "Delete", "Cancel");
         if (!confirm)
         {
             return;
         }
 
-        ToDoStore.Delete(_taskId);
-        await Shell.Current.GoToAsync("..");
+        _isBusy = true;
+        try
+        {
+            var result = await ToDoStore.DeleteAsync(_taskId);
+            if (!result.Success)
+            {
+                await DisplayAlertAsync("Delete failed", result.Message, "OK");
+                return;
+            }
+
+            await Shell.Current.GoToAsync("..");
+        }
+        finally
+        {
+            _isBusy = false;
+        }
     }
 }

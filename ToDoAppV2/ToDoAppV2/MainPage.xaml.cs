@@ -4,10 +4,36 @@ namespace listView_Corsega;
 
 public partial class MainPage : ContentPage
 {
+    private bool _isLoading;
+
     public MainPage()
     {
         InitializeComponent();
         todoCV.ItemsSource = ToDoStore.Todos;
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (_isLoading)
+        {
+            return;
+        }
+
+        _isLoading = true;
+        try
+        {
+            var result = await ToDoStore.RefreshAsync();
+            if (!result.Success && ToDoStore.CurrentUserId.HasValue)
+            {
+                await DisplayAlertAsync("Sync failed", result.Message, "OK");
+            }
+        }
+        finally
+        {
+            _isLoading = false;
+        }
     }
 
     private async void AddToDoItem(object? sender, EventArgs e)
@@ -43,10 +69,14 @@ public partial class MainPage : ContentPage
             return;
         }
 
-        ToDoStore.Delete(id);
+        var result = await ToDoStore.DeleteAsync(id);
+        if (!result.Success)
+        {
+            await DisplayAlertAsync("Delete failed", result.Message, "OK");
+        }
     }
 
-    private void CompleteToDoItem(object? sender, EventArgs e)
+    private async void CompleteToDoItem(object? sender, EventArgs e)
     {
         if (sender is not Element completeElement)
         {
@@ -58,6 +88,10 @@ public partial class MainPage : ContentPage
             return;
         }
 
-        ToDoStore.MarkCompleted(id);
+        var result = await ToDoStore.MarkCompletedAsync(id);
+        if (!result.Success)
+        {
+            await DisplayAlertAsync("Status update failed", result.Message, "OK");
+        }
     }
 }

@@ -7,7 +7,7 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-        ToDoStore.SetCurrentUser(LocalAuthService.CurrentUserEmail);
+        ToDoStore.SetCurrentUser(LocalAuthService.CurrentUser);
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
