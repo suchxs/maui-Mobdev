@@ -11,6 +11,11 @@ public partial class AddTodoPage : ContentPage
 
     private async void OnBackClicked(object? sender, EventArgs e)
     {
+        if (_isBusy)
+        {
+            return;
+        }
+
         await Shell.Current.GoToAsync("..");
     }
 
@@ -26,22 +31,22 @@ public partial class AddTodoPage : ContentPage
 
         if (string.IsNullOrWhiteSpace(title))
         {
-            await DisplayAlertAsync("Missing title", "Please enter a title for your note.", "OK");
+            await DisplayAlertAsync("Error", "Please enter a title for your note.", "OK");
             return;
         }
 
         _isBusy = true;
-        SetBusy(true, "Adding task...");
+        SetBusy(true);
         try
         {
             var result = await ToDoStore.AddAsync(title, details);
             if (!result.Success)
             {
-                await DisplayAlertAsync("Add failed", result.Message, "OK");
+                await DisplayAlertAsync("Error", result.Message, "OK");
                 return;
             }
 
-            await DisplayAlertAsync("Task added", result.Message, "OK");
+            await DisplayAlertAsync("Success", result.Message, "OK");
             await Shell.Current.GoToAsync("..");
         }
         finally
@@ -51,10 +56,10 @@ public partial class AddTodoPage : ContentPage
         }
     }
 
-    private void SetBusy(bool isBusy, string message = "Please wait...")
+    private void SetBusy(bool isBusy)
     {
-        BusyMessageLabel.Text = message;
-        BusyOverlay.IsVisible = isBusy;
         MainLayout.InputTransparent = isBusy;
+        AddButton.IsEnabled = !isBusy;
+        AddButton.Text = isBusy ? "Adding..." : "Add";
     }
 }

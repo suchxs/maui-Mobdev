@@ -24,13 +24,13 @@ public partial class MainPage : ContentPage
 
         _isLoading = true;
         _isBusy = true;
-        SetBusy(true, "Syncing tasks...");
+        SetBusy(true, "Syncing...");
         try
         {
             var result = await ToDoStore.RefreshAsync();
             if (!result.Success && ToDoStore.CurrentUserId.HasValue)
             {
-                await DisplayAlertAsync("Sync failed", result.Message, "OK");
+                await DisplayAlertAsync("Error", result.Message, "OK");
             }
         }
         finally
@@ -83,7 +83,7 @@ public partial class MainPage : ContentPage
             return;
         }
 
-        var confirm = await DisplayAlertAsync("Delete task", "Delete this item?", "Delete", "Cancel");
+        var confirm = await DisplayAlertAsync("Confirm", "Delete this item?", "Delete", "Cancel");
         if (!confirm)
         {
             return;
@@ -96,11 +96,11 @@ public partial class MainPage : ContentPage
         _isBusy = false;
         if (!result.Success)
         {
-            await DisplayAlertAsync("Delete failed", result.Message, "OK");
+            await DisplayAlertAsync("Error", result.Message, "OK");
             return;
         }
 
-        await DisplayAlertAsync("Deleted", result.Message, "OK");
+        await DisplayAlertAsync("Success", result.Message, "OK");
     }
 
     private async void CompleteToDoItem(object? sender, EventArgs e)
@@ -127,17 +127,17 @@ public partial class MainPage : ContentPage
         _isBusy = false;
         if (!result.Success)
         {
-            await DisplayAlertAsync("Status update failed", result.Message, "OK");
+            await DisplayAlertAsync("Error", result.Message, "OK");
             return;
         }
 
-        await DisplayAlertAsync("Status updated", result.Message, "OK");
+        await DisplayAlertAsync("Success", result.Message, "OK");
     }
 
-    private void SetBusy(bool isBusy, string message = "Please wait...")
+    private void SetBusy(bool isBusy, string addButtonBusyText = "+")
     {
-        BusyMessageLabel.Text = message;
-        BusyOverlay.IsVisible = isBusy;
         MainLayout.InputTransparent = isBusy;
+        AddButton.IsEnabled = !isBusy;
+        AddButton.Text = isBusy ? addButtonBusyText : "+";
     }
 }

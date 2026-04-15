@@ -30,7 +30,8 @@
                        Aspect="AspectFit" />
             </Border>
 
-            <Button Text="Sign out"
+                <Button x:Name="SignOutButton"
+                    Text="Sign out"
                     Margin="0,6,0,0"
                     CornerRadius="10"
                     FontFamily="OpenSansSemibold"

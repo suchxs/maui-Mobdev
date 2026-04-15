@@ -22,13 +22,13 @@ public partial class CompletedPage : ContentPage
 
         _isLoading = true;
         _isBusy = true;
-        SetBusy(true, "Syncing tasks...");
+        SetBusy(true);
         try
         {
             var result = await ToDoStore.RefreshAsync();
             if (!result.Success && ToDoStore.CurrentUserId.HasValue)
             {
-                await DisplayAlertAsync("Sync failed", result.Message, "OK");
+                await DisplayAlertAsync("Error", result.Message, "OK");
             }
         }
         finally
@@ -72,23 +72,21 @@ public partial class CompletedPage : ContentPage
         }
 
         _isBusy = true;
-        SetBusy(true, "Deleting task...");
+        SetBusy(true);
         var result = await ToDoStore.DeleteAsync(id);
         SetBusy(false);
         _isBusy = false;
         if (!result.Success)
         {
-            await DisplayAlertAsync("Delete failed", result.Message, "OK");
+            await DisplayAlertAsync("Error", result.Message, "OK");
             return;
         }
 
-        await DisplayAlertAsync("Deleted", result.Message, "OK");
+        await DisplayAlertAsync("Success", result.Message, "OK");
     }
 
-    private void SetBusy(bool isBusy, string message = "Please wait...")
+    private void SetBusy(bool isBusy)
     {
-        BusyMessageLabel.Text = message;
-        BusyOverlay.IsVisible = isBusy;
         MainLayout.InputTransparent = isBusy;
     }
 }

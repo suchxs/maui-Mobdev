@@ -28,33 +28,33 @@ public partial class SignUpPage : ContentPage
             string.IsNullOrWhiteSpace(password) ||
             string.IsNullOrWhiteSpace(confirmPassword))
         {
-            await DisplayAlertAsync("Missing details", "Please complete all fields.", "OK");
+            await DisplayAlertAsync("Error", "Please complete all fields.", "OK");
             return;
         }
 
         if (!string.Equals(password, confirmPassword, StringComparison.Ordinal))
         {
-            await DisplayAlertAsync("Password mismatch", "Password and confirm password must match.", "OK");
+            await DisplayAlertAsync("Error", "Password and confirm password must match.", "OK");
             return;
         }
 
         _isBusy = true;
-        SetBusy(true, "Creating account...");
+        SetBusy(true);
         try
         {
             var result = await ToDoApiClient.SignUpAsync(firstName, lastName, email, password, confirmPassword);
             if (!result.Success)
             {
-                await DisplayAlertAsync("Sign up failed", result.Message, "OK");
+                await DisplayAlertAsync("Error", result.Message, "OK");
                 return;
             }
 
-            await DisplayAlertAsync("Account created", result.Message, "Continue");
+            await DisplayAlertAsync("Success", result.Message, "Continue");
             await Shell.Current.GoToAsync("..");
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Sign up failed", $"Unexpected error: {ex.Message}", "OK");
+            await DisplayAlertAsync("Error", $"Unexpected error: {ex.Message}", "OK");
         }
         finally
         {
@@ -68,10 +68,16 @@ public partial class SignUpPage : ContentPage
         await Shell.Current.GoToAsync("..");
     }
 
-    private void SetBusy(bool isBusy, string message = "Please wait...")
+    private void SetBusy(bool isBusy)
     {
-        BusyMessageLabel.Text = message;
-        BusyOverlay.IsVisible = isBusy;
         MainScroll.InputTransparent = isBusy;
+        FirstNameEntry.IsEnabled = !isBusy;
+        LastNameEntry.IsEnabled = !isBusy;
+        EmailEntry.IsEnabled = !isBusy;
+        PasswordEntry.IsEnabled = !isBusy;
+        ConfirmPasswordEntry.IsEnabled = !isBusy;
+        SignUpButton.IsEnabled = !isBusy;
+        GoToSignInButton.IsEnabled = !isBusy;
+        SignUpButton.Text = isBusy ? "Creating account..." : "Sign up";
     }
 }

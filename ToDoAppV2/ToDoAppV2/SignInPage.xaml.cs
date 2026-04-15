@@ -21,18 +21,18 @@ public partial class SignInPage : ContentPage
 
         if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
         {
-            await DisplayAlertAsync("Missing details", "Please enter your email and password.", "OK");
+            await DisplayAlertAsync("Error", "Please enter your email and password.", "OK");
             return;
         }
 
         _isBusy = true;
-        SetBusy(true, "Signing in...");
+        SetBusy(true);
         try
         {
             var result = await ToDoApiClient.SignInAsync(email, password);
             if (!result.Success || result.User is null)
             {
-                await DisplayAlertAsync("Sign in failed", result.Message, "OK");
+                await DisplayAlertAsync("Error", result.Message, "OK");
                 return;
             }
 
@@ -42,14 +42,14 @@ public partial class SignInPage : ContentPage
             var refreshResult = await ToDoStore.RefreshAsync();
             if (!refreshResult.Success)
             {
-                await DisplayAlertAsync("Warning", refreshResult.Message, "OK");
+                await DisplayAlertAsync("Error", refreshResult.Message, "OK");
             }
 
             await Shell.Current.GoToAsync("//MainPage");
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Sign in failed", $"Unexpected error: {ex.Message}", "OK");
+            await DisplayAlertAsync("Error", $"Unexpected error: {ex.Message}", "OK");
         }
         finally
         {
@@ -63,10 +63,13 @@ public partial class SignInPage : ContentPage
         await Shell.Current.GoToAsync(nameof(SignUpPage));
     }
 
-    private void SetBusy(bool isBusy, string message = "Please wait...")
+    private void SetBusy(bool isBusy)
     {
-        BusyMessageLabel.Text = message;
-        BusyOverlay.IsVisible = isBusy;
         MainScroll.InputTransparent = isBusy;
+        EmailEntry.IsEnabled = !isBusy;
+        PasswordEntry.IsEnabled = !isBusy;
+        SignInButton.IsEnabled = !isBusy;
+        GoToSignUpButton.IsEnabled = !isBusy;
+        SignInButton.Text = isBusy ? "Signing in..." : "Sign in";
     }
 }

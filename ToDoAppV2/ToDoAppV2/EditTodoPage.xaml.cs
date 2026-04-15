@@ -6,6 +6,8 @@ public partial class EditTodoPage : ContentPage
     private int _taskId;
     private bool _isCompleted;
     private bool _isBusy;
+    private Button? _activeButton;
+    private string _activeButtonText = string.Empty;
 
     public string? TaskId
     {
@@ -41,7 +43,7 @@ public partial class EditTodoPage : ContentPage
         var item = ToDoStore.Find(_taskId);
         if (item is null)
         {
-            _ = DisplayAlertAsync("Task not found", "This task no longer exists.", "OK");
+            _ = DisplayAlertAsync("Error", "This task no longer exists.", "OK");
             _ = Shell.Current.GoToAsync("..");
             return;
         }
@@ -75,22 +77,22 @@ public partial class EditTodoPage : ContentPage
 
         if (string.IsNullOrWhiteSpace(title))
         {
-            await DisplayAlertAsync("Missing title", "Please enter a title for your task.", "OK");
+            await DisplayAlertAsync("Error", "Please enter a title for your task.", "OK");
             return;
         }
 
         _isBusy = true;
-        SetBusy(true, "Updating task...");
+        SetBusy(true, UpdateButton, "Updating...");
         try
         {
             var result = await ToDoStore.UpdateAsync(_taskId, title, details);
             if (!result.Success)
             {
-                await DisplayAlertAsync("Update failed", result.Message, "OK");
+                await DisplayAlertAsync("Error", result.Message, "OK");
                 return;
             }
 
-            await DisplayAlertAsync("Updated", result.Message, "OK");
+            await DisplayAlertAsync("Success", result.Message, "OK");
         }
         finally
         {
@@ -107,7 +109,7 @@ public partial class EditTodoPage : ContentPage
         }
 
         _isBusy = true;
-        SetBusy(true, "Updating status...");
+        SetBusy(true, StatusButton, "Updating...");
         try
         {
             (bool Success, string Message) result;
@@ -122,11 +124,11 @@ public partial class EditTodoPage : ContentPage
 
             if (!result.Success)
             {
-                await DisplayAlertAsync("Status update failed", result.Message, "OK");
+                await DisplayAlertAsync("Error", result.Message, "OK");
                 return;
             }
 
-            await DisplayAlertAsync("Status updated", result.Message, "OK");
+            await DisplayAlertAsync("Success", result.Message, "OK");
             await Shell.Current.GoToAsync("..");
         }
         finally
@@ -143,24 +145,24 @@ public partial class EditTodoPage : ContentPage
             return;
         }
 
-        var confirm = await DisplayAlertAsync("Delete task", "Delete this item?", "Delete", "Cancel");
+        var confirm = await DisplayAlertAsync("Confirm", "Delete this item?", "Delete", "Cancel");
         if (!confirm)
         {
             return;
         }
 
         _isBusy = true;
-        SetBusy(true, "Deleting task...");
+        SetBusy(true, DeleteButton, "Deleting...");
         try
         {
             var result = await ToDoStore.DeleteAsync(_taskId);
             if (!result.Success)
             {
-                await DisplayAlertAsync("Delete failed", result.Message, "OK");
+                await DisplayAlertAsync("Error", result.Message, "OK");
                 return;
             }
 
-            await DisplayAlertAsync("Deleted", result.Message, "OK");
+            await DisplayAlertAsync("Success", result.Message, "OK");
             await Shell.Current.GoToAsync("..");
         }
         finally
@@ -170,10 +172,26 @@ public partial class EditTodoPage : ContentPage
         }
     }
 
-    private void SetBusy(bool isBusy, string message = "Please wait...")
+    private void SetBusy(bool isBusy, Button? activeButton = null, string activeButtonBusyText = "Working...")
     {
-        BusyMessageLabel.Text = message;
-        BusyOverlay.IsVisible = isBusy;
         MainLayout.InputTransparent = isBusy;
+
+        if (isBusy)
+        {
+            _activeButton = activeButton;
+            _activeButtonText = activeButton?.Text ?? string.Empty;
+            if (_activeButton is not null)
+            {
+                _activeButton.Text = activeButtonBusyText;
+            }
+            return;
+        }
+
+        if (_activeButton is not null)
+        {
+            _activeButton.Text = _activeButtonText;
+            _activeButton = null;
+            _activeButtonText = string.Empty;
+        }
     }
 }
