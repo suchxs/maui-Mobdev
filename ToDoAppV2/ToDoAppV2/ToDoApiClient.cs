@@ -184,28 +184,29 @@ public static class ToDoApiClient
 
             using var response = await Http.PostAsync("/addItem_action.php", new FormUrlEncodedContent(payload));
             var body = await response.Content.ReadAsStringAsync();
-
-            if (!TryParseJson(body, out var doc))
+            var parsed = ParseAddItemResponse(body, "Unable to add task.");
+            if (parsed.Success)
             {
-                return (false, ExtractPlainTextMessage(body, "Unable to add task."), null);
+                return parsed;
             }
 
-            using var _ = doc;
-            var root = doc.RootElement;
-            var responseStatus = ReadInt(root, "status");
-            var message = NormalizeAddItemMessage(ReadString(root, "message") ?? "Unable to add task.", responseStatus == 200);
-
-            if (responseStatus != 200)
+            // Some backend builds expect JSON body for this route and incorrectly return
+            // "fill up all fields" for form-encoded payloads. Retry once with JSON.
+            if (ContainsAny(parsed.Message, "fill all fields", "fill up all fields", "use up all fields", "complete all fields"))
             {
-                return (false, message, null);
+                var jsonPayload = new
+                {
+                    item_name = title,
+                    item_description = detail,
+                    user_id = userId
+                };
+
+                using var jsonResponse = await Http.PostAsJsonAsync("/addItem_action.php", jsonPayload);
+                var jsonBody = await jsonResponse.Content.ReadAsStringAsync();
+                return ParseAddItemResponse(jsonBody, "Unable to add task.");
             }
 
-            if (!root.TryGetProperty("data", out var data) || data.ValueKind != JsonValueKind.Object)
-            {
-                return (true, message, null);
-            }
-
-            return (true, message, ParseTask(data));
+            return parsed;
         }
         catch (Exception ex)
         {
@@ -213,26 +214,78 @@ public static class ToDoApiClient
         }
     }
 
+    private static (bool Success, string Message, ToDoClass? Item) ParseAddItemResponse(string responseBody, string defaultError)
+    {
+        if (!TryParseJson(responseBody, out var doc))
+        {
+            return (false, ExtractPlainTextMessage(responseBody, defaultError), null);
+        }
+
+        using var _ = doc;
+        var root = doc.RootElement;
+        var responseStatus = ReadInt(root, "status");
+        var message = NormalizeAddItemMessage(ReadString(root, "message") ?? defaultError, responseStatus == 200);
+
+        if (responseStatus != 200)
+        {
+            return (false, message, null);
+        }
+
+        if (!root.TryGetProperty("data", out var data) || data.ValueKind != JsonValueKind.Object)
+        {
+            return (true, message, null);
+        }
+
+        return (true, message, ParseTask(data));
+    }
+
     public static async Task<(bool Success, string Message)> UpdateItemAsync(int itemId, string title, string detail)
     {
         try
         {
-            var payload = new Dictionary<string, string>
+            var jsonPayload = new
             {
-                ["item_name"] = title,
-                ["item_description"] = detail,
-                ["item_id"] = itemId.ToString()
+                item_name = title,
+                item_description = detail,
+                item_id = itemId
             };
 
             using var request = new HttpRequestMessage(HttpMethod.Put, "/editItem_action.php")
             {
-                Content = new FormUrlEncodedContent(payload)
+                Content = JsonContent.Create(jsonPayload)
             };
 
             using var response = await Http.SendAsync(request);
             var body = await response.Content.ReadAsStringAsync();
             var parsed = ParseSimpleStatusMessage(body, response.IsSuccessStatusCode, "Unable to update task.");
-            return (parsed.Success, NormalizeUpdateItemMessage(parsed.Message, parsed.Success));
+            var normalized = (Success: parsed.Success, Message: NormalizeUpdateItemMessage(parsed.Message, parsed.Success));
+            if (normalized.Success)
+            {
+                return normalized;
+            }
+
+            // Fallback for backend variants that read only form payloads for PUT.
+            if (ShouldRetryPutWithForm(normalized.Message))
+            {
+                var formPayload = new Dictionary<string, string>
+                {
+                    ["item_name"] = title,
+                    ["item_description"] = detail,
+                    ["item_id"] = itemId.ToString()
+                };
+
+                using var fallbackRequest = new HttpRequestMessage(HttpMethod.Put, "/editItem_action.php")
+                {
+                    Content = new FormUrlEncodedContent(formPayload)
+                };
+
+                using var fallbackResponse = await Http.SendAsync(fallbackRequest);
+                var fallbackBody = await fallbackResponse.Content.ReadAsStringAsync();
+                var fallbackParsed = ParseSimpleStatusMessage(fallbackBody, fallbackResponse.IsSuccessStatusCode, "Unable to update task.");
+                return (fallbackParsed.Success, NormalizeUpdateItemMessage(fallbackParsed.Message, fallbackParsed.Success));
+            }
+
+            return normalized;
         }
         catch (Exception ex)
         {
@@ -244,21 +297,46 @@ public static class ToDoApiClient
     {
         try
         {
-            var payload = new Dictionary<string, string>
+            var jsonPayload = new
             {
-                ["status"] = status,
-                ["item_id"] = itemId.ToString()
+                status,
+                item_id = itemId
             };
 
             using var request = new HttpRequestMessage(HttpMethod.Put, "/statusItem_action.php")
             {
-                Content = new FormUrlEncodedContent(payload)
+                Content = JsonContent.Create(jsonPayload)
             };
 
             using var response = await Http.SendAsync(request);
             var body = await response.Content.ReadAsStringAsync();
             var parsed = ParseSimpleStatusMessage(body, response.IsSuccessStatusCode, "Unable to update task status.");
-            return (parsed.Success, NormalizeStatusMessage(parsed.Message, parsed.Success));
+            var normalized = (Success: parsed.Success, Message: NormalizeStatusMessage(parsed.Message, parsed.Success));
+            if (normalized.Success)
+            {
+                return normalized;
+            }
+
+            if (ShouldRetryPutWithForm(normalized.Message))
+            {
+                var formPayload = new Dictionary<string, string>
+                {
+                    ["status"] = status,
+                    ["item_id"] = itemId.ToString()
+                };
+
+                using var fallbackRequest = new HttpRequestMessage(HttpMethod.Put, "/statusItem_action.php")
+                {
+                    Content = new FormUrlEncodedContent(formPayload)
+                };
+
+                using var fallbackResponse = await Http.SendAsync(fallbackRequest);
+                var fallbackBody = await fallbackResponse.Content.ReadAsStringAsync();
+                var fallbackParsed = ParseSimpleStatusMessage(fallbackBody, fallbackResponse.IsSuccessStatusCode, "Unable to update task status.");
+                return (fallbackParsed.Success, NormalizeStatusMessage(fallbackParsed.Message, fallbackParsed.Success));
+            }
+
+            return normalized;
         }
         catch (Exception ex)
         {
@@ -392,6 +470,12 @@ public static class ToDoApiClient
             return "Email already exists.";
         }
 
+        // Backend can return this generic text for duplicate email despite all fields being provided.
+        if (ContainsAny(m, "fill up all fields", "use up all fields", "complete all fields"))
+        {
+            return "Email already exists.";
+        }
+
         if (success || ContainsAny(m, "account created"))
         {
             return "Account created successfully.";
@@ -481,6 +565,20 @@ public static class ToDoApiClient
         }
 
         return false;
+    }
+
+    private static bool ShouldRetryPutWithForm(string message)
+    {
+        return ContainsAny(
+            message,
+            "fill all fields",
+            "fill up all fields",
+            "use up all fields",
+            "complete all fields",
+            "id does not exist",
+            "invalid id",
+            "missing"
+        );
     }
 
     private static ToDoClass? ParseTask(JsonElement obj)

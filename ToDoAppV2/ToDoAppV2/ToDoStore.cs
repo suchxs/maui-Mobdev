@@ -60,7 +60,12 @@ public static class ToDoStore
             return (false, result.Message);
         }
 
-        await RefreshAsync();
+        var refreshResult = await RefreshAsync();
+        if (!refreshResult.Success)
+        {
+            return (false, refreshResult.Message);
+        }
+
         return (true, result.Message);
     }
 
@@ -95,7 +100,12 @@ public static class ToDoStore
             return (false, result.Message);
         }
 
-        await RefreshAsync();
+        var refreshResult = await RefreshAsync();
+        if (!refreshResult.Success)
+        {
+            return (false, refreshResult.Message);
+        }
+
         return (true, result.Message);
     }
 
@@ -107,7 +117,12 @@ public static class ToDoStore
             return (false, result.Message);
         }
 
-        await RefreshAsync();
+        var refreshResult = await RefreshAsync();
+        if (!refreshResult.Success)
+        {
+            return (false, refreshResult.Message);
+        }
+
         return (true, result.Message);
     }
 
@@ -130,7 +145,12 @@ public static class ToDoStore
             return (false, result.Message);
         }
 
-        await RefreshAsync();
+        var refreshResult = await RefreshAsync();
+        if (!refreshResult.Success)
+        {
+            return (false, refreshResult.Message);
+        }
+
         return (true, result.Message);
     }
 
