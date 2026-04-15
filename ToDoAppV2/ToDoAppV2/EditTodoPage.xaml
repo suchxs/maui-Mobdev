@@ -5,7 +5,8 @@
              Title="Edit Task"
              BackgroundColor="#F2F4F8">
 
-    <Grid Padding="16,12,16,20" RowDefinitions="Auto,Auto,*">
+        <Grid>
+                <Grid x:Name="MainLayout" Padding="16,12,16,20" RowDefinitions="Auto,Auto,*">
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" HeightRequest="44">
             <Button Grid.Column="0"
                     Text="‹ Back"
@@ -72,6 +73,32 @@
                     TextColor="#C0392B"
                     Clicked="OnDeleteClicked" />
         </VerticalStackLayout>
-    </Grid>
+                </Grid>
+
+                <Grid x:Name="BusyOverlay"
+                          IsVisible="False"
+                          BackgroundColor="#66000000"
+                          InputTransparent="False">
+                        <Border HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        Padding="18,16"
+                                        StrokeThickness="0"
+                                        BackgroundColor="White"
+                                        StrokeShape="RoundRectangle 18">
+                                <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
+                                        <ActivityIndicator IsRunning="True"
+                                                                           Color="#5B3FD6"
+                                                                           WidthRequest="34"
+                                                                           HeightRequest="34" />
+                                        <Label x:Name="BusyMessageLabel"
+                                                   Text="Saving..."
+                                                   FontFamily="OpenSansSemibold"
+                                                   FontSize="14"
+                                                   TextColor="#334155"
+                                                   HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                        </Border>
+                </Grid>
+        </Grid>
 
 </ContentPage>

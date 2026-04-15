@@ -39,6 +39,7 @@ public partial class SignUpPage : ContentPage
         }
 
         _isBusy = true;
+        SetBusy(true, "Creating account...");
         try
         {
             var result = await ToDoApiClient.SignUpAsync(firstName, lastName, email, password, confirmPassword);
@@ -51,8 +52,13 @@ public partial class SignUpPage : ContentPage
             await DisplayAlertAsync("Account created", result.Message, "Continue");
             await Shell.Current.GoToAsync("..");
         }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Sign up failed", $"Unexpected error: {ex.Message}", "OK");
+        }
         finally
         {
+            SetBusy(false);
             _isBusy = false;
         }
     }
@@ -60,5 +66,12 @@ public partial class SignUpPage : ContentPage
     private async void OnGoToSignInClicked(object? sender, EventArgs e)
     {
         await Shell.Current.GoToAsync("..");
+    }
+
+    private void SetBusy(bool isBusy, string message = "Please wait...")
+    {
+        BusyMessageLabel.Text = message;
+        BusyOverlay.IsVisible = isBusy;
+        MainScroll.InputTransparent = isBusy;
     }
 }

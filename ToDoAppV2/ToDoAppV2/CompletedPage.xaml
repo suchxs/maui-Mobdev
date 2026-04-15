@@ -6,7 +6,8 @@
              Title="Completed"
              BackgroundColor="#F2F4F8">
 
-    <Grid Padding="16,12,16,0" RowDefinitions="Auto,Auto,*">
+    <Grid>
+        <Grid x:Name="MainLayout" Padding="16,12,16,0" RowDefinitions="Auto,Auto,*">
         <Label Grid.Row="0"
                Text="Completed"
                FontFamily="OpenSansSemibold"
@@ -81,6 +82,32 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+        </Grid>
+
+        <Grid x:Name="BusyOverlay"
+              IsVisible="False"
+              BackgroundColor="#5AFFFFFF"
+              InputTransparent="False">
+            <Border HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Padding="18,16"
+                    StrokeThickness="0"
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 18">
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="True"
+                                       Color="#4F46E5"
+                                       WidthRequest="34"
+                                       HeightRequest="34" />
+                    <Label x:Name="BusyMessageLabel"
+                           Text="Syncing tasks..."
+                           FontFamily="OpenSansSemibold"
+                           FontSize="14"
+                           TextColor="#334155"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
     </Grid>
 
 </ContentPage>

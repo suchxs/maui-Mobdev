@@ -9,41 +9,6 @@ public partial class SignInPage : ContentPage
         InitializeComponent();
     }
 
-    protected override async void OnAppearing()
-    {
-        base.OnAppearing();
-
-        if (_isBusy)
-        {
-            return;
-        }
-
-        var currentUser = LocalAuthService.CurrentUser;
-        if (currentUser is null)
-        {
-            return;
-        }
-
-        _isBusy = true;
-        try
-        {
-            ToDoStore.SetCurrentUser(currentUser);
-            var refreshResult = await ToDoStore.RefreshAsync();
-            if (!refreshResult.Success)
-            {
-                LocalAuthService.ClearCurrentUser();
-                ToDoStore.SetCurrentUser(null);
-                return;
-            }
-
-            await Shell.Current.GoToAsync("//MainPage");
-        }
-        finally
-        {
-            _isBusy = false;
-        }
-    }
-
     private async void OnSignInClicked(object? sender, EventArgs e)
     {
         if (_isBusy)
@@ -61,6 +26,7 @@ public partial class SignInPage : ContentPage
         }
 
         _isBusy = true;
+        SetBusy(true, "Signing in...");
         try
         {
             var result = await ToDoApiClient.SignInAsync(email, password);
@@ -81,8 +47,13 @@ public partial class SignInPage : ContentPage
 
             await Shell.Current.GoToAsync("//MainPage");
         }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Sign in failed", $"Unexpected error: {ex.Message}", "OK");
+        }
         finally
         {
+            SetBusy(false);
             _isBusy = false;
         }
     }
@@ -90,5 +61,12 @@ public partial class SignInPage : ContentPage
     private async void OnGoToSignUpClicked(object? sender, EventArgs e)
     {
         await Shell.Current.GoToAsync(nameof(SignUpPage));
+    }
+
+    private void SetBusy(bool isBusy, string message = "Please wait...")
+    {
+        BusyMessageLabel.Text = message;
+        BusyOverlay.IsVisible = isBusy;
+        MainScroll.InputTransparent = isBusy;
     }
 }

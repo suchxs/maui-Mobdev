@@ -5,6 +5,7 @@ namespace listView_Corsega;
 public partial class MainPage : ContentPage
 {
     private bool _isLoading;
+    private bool _isBusy;
 
     public MainPage()
     {
@@ -22,6 +23,8 @@ public partial class MainPage : ContentPage
         }
 
         _isLoading = true;
+        _isBusy = true;
+        SetBusy(true, "Syncing tasks...");
         try
         {
             var result = await ToDoStore.RefreshAsync();
@@ -32,17 +35,29 @@ public partial class MainPage : ContentPage
         }
         finally
         {
+            SetBusy(false);
+            _isBusy = false;
             _isLoading = false;
         }
     }
 
     private async void AddToDoItem(object? sender, EventArgs e)
     {
+        if (_isBusy)
+        {
+            return;
+        }
+
         await Shell.Current.GoToAsync(nameof(AddTodoPage));
     }
 
     private async void OpenEditPage(object? sender, TappedEventArgs e)
     {
+        if (_isBusy)
+        {
+            return;
+        }
+
         if (e.Parameter is null || !int.TryParse(e.Parameter.ToString(), out var id))
         {
             return;
@@ -53,6 +68,11 @@ public partial class MainPage : ContentPage
 
     private async void DeleteToDoItem(object? sender, EventArgs e)
     {
+        if (_isBusy)
+        {
+            return;
+        }
+
         if (sender is not Element deleteElement)
         {
             return;
@@ -69,15 +89,27 @@ public partial class MainPage : ContentPage
             return;
         }
 
+        _isBusy = true;
+        SetBusy(true, "Deleting task...");
         var result = await ToDoStore.DeleteAsync(id);
+        SetBusy(false);
+        _isBusy = false;
         if (!result.Success)
         {
             await DisplayAlertAsync("Delete failed", result.Message, "OK");
+            return;
         }
+
+        await DisplayAlertAsync("Deleted", result.Message, "OK");
     }
 
     private async void CompleteToDoItem(object? sender, EventArgs e)
     {
+        if (_isBusy)
+        {
+            return;
+        }
+
         if (sender is not Element completeElement)
         {
             return;
@@ -88,10 +120,24 @@ public partial class MainPage : ContentPage
             return;
         }
 
+        _isBusy = true;
+        SetBusy(true, "Updating status...");
         var result = await ToDoStore.MarkCompletedAsync(id);
+        SetBusy(false);
+        _isBusy = false;
         if (!result.Success)
         {
             await DisplayAlertAsync("Status update failed", result.Message, "OK");
+            return;
         }
+
+        await DisplayAlertAsync("Status updated", result.Message, "OK");
+    }
+
+    private void SetBusy(bool isBusy, string message = "Please wait...")
+    {
+        BusyMessageLabel.Text = message;
+        BusyOverlay.IsVisible = isBusy;
+        MainLayout.InputTransparent = isBusy;
     }
 }

@@ -31,6 +31,7 @@ public partial class AddTodoPage : ContentPage
         }
 
         _isBusy = true;
+        SetBusy(true, "Adding task...");
         try
         {
             var result = await ToDoStore.AddAsync(title, details);
@@ -40,11 +41,20 @@ public partial class AddTodoPage : ContentPage
                 return;
             }
 
+            await DisplayAlertAsync("Task added", result.Message, "OK");
             await Shell.Current.GoToAsync("..");
         }
         finally
         {
+            SetBusy(false);
             _isBusy = false;
         }
+    }
+
+    private void SetBusy(bool isBusy, string message = "Please wait...")
+    {
+        BusyMessageLabel.Text = message;
+        BusyOverlay.IsVisible = isBusy;
+        MainLayout.InputTransparent = isBusy;
     }
 }

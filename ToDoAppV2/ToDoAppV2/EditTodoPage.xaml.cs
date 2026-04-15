@@ -80,6 +80,7 @@ public partial class EditTodoPage : ContentPage
         }
 
         _isBusy = true;
+        SetBusy(true, "Updating task...");
         try
         {
             var result = await ToDoStore.UpdateAsync(_taskId, title, details);
@@ -89,10 +90,11 @@ public partial class EditTodoPage : ContentPage
                 return;
             }
 
-            await DisplayAlertAsync("Updated", "Task updated successfully.", "OK");
+            await DisplayAlertAsync("Updated", result.Message, "OK");
         }
         finally
         {
+            SetBusy(false);
             _isBusy = false;
         }
     }
@@ -105,6 +107,7 @@ public partial class EditTodoPage : ContentPage
         }
 
         _isBusy = true;
+        SetBusy(true, "Updating status...");
         try
         {
             (bool Success, string Message) result;
@@ -123,10 +126,12 @@ public partial class EditTodoPage : ContentPage
                 return;
             }
 
+            await DisplayAlertAsync("Status updated", result.Message, "OK");
             await Shell.Current.GoToAsync("..");
         }
         finally
         {
+            SetBusy(false);
             _isBusy = false;
         }
     }
@@ -145,6 +150,7 @@ public partial class EditTodoPage : ContentPage
         }
 
         _isBusy = true;
+        SetBusy(true, "Deleting task...");
         try
         {
             var result = await ToDoStore.DeleteAsync(_taskId);
@@ -154,11 +160,20 @@ public partial class EditTodoPage : ContentPage
                 return;
             }
 
+            await DisplayAlertAsync("Deleted", result.Message, "OK");
             await Shell.Current.GoToAsync("..");
         }
         finally
         {
+            SetBusy(false);
             _isBusy = false;
         }
+    }
+
+    private void SetBusy(bool isBusy, string message = "Please wait...")
+    {
+        BusyMessageLabel.Text = message;
+        BusyOverlay.IsVisible = isBusy;
+        MainLayout.InputTransparent = isBusy;
     }
 }
